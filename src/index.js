@@ -5,16 +5,32 @@ import {Provider} from 'react-redux';
 import {createStore} from 'redux';
 import App from './App';
 import './index.css';
+
+// const client = require("cloud-config-client");
+//
+// client.load({
+//     name:"sample-config",
+//     profiles:["development"],
+//     headers: { "Access-Control-Allow-Origin": "*" }
+// }).then((config) => {
+//     const value1 = config.get("source");
+//     console.log(value1);
+// });
+
+var request = require('sync-request');
+var res = request('GET', 'http://localhost:8888/sample-config/development');
+
 const enhancer =
     FeatureFlag.instrument({
         EnableComponent: false
     });
 
+const isFeatureEnabled= JSON.parse(res.getBody('utf8')).propertySources[0].source.EnableComponent == "true";
 const reducer = state => state;
 const initialState = [() => ({}), 'plain JS state'];
 
 const store = createStore(reducer,initialState,enhancer);
-// store.dispatch(setFlags({  EnableComponent: false}));
+store.dispatch(setFlags({  EnableComponent: isFeatureEnabled}));
 
 ReactDOM.render(
     <Provider store={store}>
