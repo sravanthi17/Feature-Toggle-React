@@ -28,12 +28,14 @@ client.load({
     name:"sample-config",
     profiles:["development"]
 }).then((config) => {
-    store.dispatch(setFlags({  EnableComponent: config.get("EnableComponent")}));
+    store.dispatch(setFlags({  EnableComponent: config.get("EnableComponent") == "true"}));
+    console.log(store.getState());
+    ReactDOM.render(
+        <Provider store={store}>
+            <App />
+        </Provider>,
+        document.getElementById('root')
+    );
 });
 
-ReactDOM.render(
-    <Provider store={store}>
-        <App />
-    </Provider>,
-  document.getElementById('root')
-);
+
